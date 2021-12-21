@@ -1,11 +1,29 @@
 import React from "react";
 
-function PizzaForm() {
+function PizzaForm({formData, onChangeForm, onSubmitUpdate}) {
+
+  function handleSubmit(e) {
+    e.preventDefault()
+
+   fetch(`http://localhost:3001/pizzas/${formData.id}`, {
+     method: 'PATCH',
+     headers: {
+       "Content-Type": "application/json"
+     },
+     body: JSON.stringify(formData)
+   })
+   .then(res => res.json())
+   .then(updatedData => onSubmitUpdate(updatedData))
+  }
+
+
   return (
-    <form onSubmit={null /*handle that submit*/}>
+    <form onSubmit={handleSubmit}>
       <div className="form-row">
         <div className="col-5">
           <input
+            value={formData.topping}
+            onChange={onChangeForm}
             className="form-control"
             type="text"
             name="topping"
@@ -13,7 +31,12 @@ function PizzaForm() {
           />
         </div>
         <div className="col">
-          <select className="form-control" name="size">
+          <select
+            value={formData.size}
+            onChange={onChangeForm}
+            className="form-control"
+            name="size"
+          >
             <option value="Small">Small</option>
             <option value="Medium">Medium</option>
             <option value="Large">Large</option>
@@ -22,6 +45,8 @@ function PizzaForm() {
         <div className="col">
           <div className="form-check">
             <input
+              checked={formData.vegetarian}
+              onChange={onChangeForm}
               className="form-check-input"
               type="radio"
               name="vegetarian"
@@ -31,6 +56,8 @@ function PizzaForm() {
           </div>
           <div className="form-check">
             <input
+              checked={!formData.vegetarian}
+              onChange={onChangeForm}
               className="form-check-input"
               type="radio"
               name="vegetarian"
